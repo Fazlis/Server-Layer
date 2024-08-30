@@ -8,7 +8,7 @@
 import Foundation
 
 
-final class RequestBuilder {
+public final class RequestBuilder {
     func makeRequest(from endpoint: Endpoint) throws -> URLRequest {
         let url = try makeUrl(from: endpoint)
         var request = URLRequest(url: url)

@@ -9,12 +9,12 @@ import Foundation
 
 
 
-protocol HTTPDataDownloader {
+public protocol HTTPDataDownloader {
     func httpData(for request: URLRequest) async throws -> Data
 }
 
 extension URLSession: HTTPDataDownloader {
-    func httpData(for request: URLRequest) async throws -> Data {
+    public func httpData(for request: URLRequest) async throws -> Data {
         let (data, response) = try await self.data(for: request)
         
         guard let httpResponse = response as? HTTPURLResponse else {

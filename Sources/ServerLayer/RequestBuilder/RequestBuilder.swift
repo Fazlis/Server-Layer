@@ -31,8 +31,8 @@ public struct RequestBuilder {
         //Implement your services to handle url
         var components = URLComponents()
         components.scheme = "https"
-        components.host = "api.sejm.gov.pl"
-        components.path = "/sejm/term10" + endpoint.path
+        components.host = endpoint.host
+        components.path = endpoint.path
         guard let url = components.url else {
             throw APIError.invalidUrl
         }

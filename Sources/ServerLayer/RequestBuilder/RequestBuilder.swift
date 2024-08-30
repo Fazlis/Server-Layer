@@ -32,10 +32,12 @@ public struct RequestBuilder {
         var components = URLComponents()
         components.scheme = "https"
         components.host = endpoint.host
-        components.path = endpoint.path
+        components.path = "/services/" + endpoint.path
+        
         guard let url = components.url else {
             throw APIError.invalidUrl
         }
+        
         return url
     }
 }

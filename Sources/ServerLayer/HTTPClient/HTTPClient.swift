@@ -34,7 +34,7 @@ extension HTTPClient {
         
         let data = try await downloader.httpData(for: request)
         
-        logResponse(data)
+        logResponse(data, request)
         
         return data
     }
@@ -46,41 +46,42 @@ extension HTTPClient {
         
         let data = try await downloader.httpData(for: request)
         
-        logResponse(data)
+        logResponse(data, request)
         
         return try decoder.decode(from: data)
     }
     
     private func logRequset(_ request: URLRequest) {
-        debugPrint("🔽🔽🔽")
-        
-        debugPrint("🌐 Request URL: \(request.url?.absoluteString ?? "No URL")")
-        
-        debugPrint("💻 HTTP Method: \(request.httpMethod ?? "No Method")")
-        
+        var debugingPrint = "🔽🔽🔽\n"
+        debugingPrint += "🌐 Request URL: \(request.url?.absoluteString ?? "No URL")\n"
+        debugingPrint += "💻 HTTP Method: \(request.httpMethod ?? "No Method")\n"
+
         if let headers = request.allHTTPHeaderFields {
-            debugPrint("🎩 Headers: \(headers)")
+            debugingPrint += "🎩 Headers: \(headers)\n"
         }
-        
+
         if let body = request.httpBody,
-           let json = try? JSON(data: body) {
-            debugPrint("👤 Body: \(json)")
+           let json = try? JSONSerialization.jsonObject(with: body, options: []) {
+            debugingPrint += "👤 Body: \(json)\n"
         }
-        
-        debugPrint("🔼🔼🔼")
+
+        debugingPrint += "🔼🔼🔼"
+
+        debugPrint(debugingPrint)
     }
     
-    private func logResponse(_ data: Data) {
-        let json = try? JSON(data: data)
+    private func logResponse(_ data: Data, _ request: URLRequest) {
+        var symbol = data != nil ? "✅✅✅" : "❌❌❌"
         
-        var symbol = json != nil ? "✅✅✅" : "❌❌❌"
+        let json = try? JSONDecoder().decode(JSON.self, from: data)
         
-        var response = json != nil ? "📲 Response JSON: \n\(json)" : "Invalid JSON"
+        let jsonString = json?.rawString(.utf8, options: .prettyPrinted) ?? ""
         
-        debugPrint(symbol)
-        
-        debugPrint(response)
-        
-        debugPrint(symbol)
+        debugPrint("""
+        \(symbol)⬇️
+        URL: \(request.url?.absoluteString ?? "No URL");
+        JSON: \(jsonString)
+        ⬆️\(symbol)
+        """)
     }
 }

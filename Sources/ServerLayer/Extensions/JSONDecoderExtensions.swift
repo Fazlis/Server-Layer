@@ -33,3 +33,10 @@ extension JSONDecoder {
         }
     }
 }
+
+
+func debugPrint(_ any: Any) {
+#if DEBUG
+print(any)
+#endif
+}

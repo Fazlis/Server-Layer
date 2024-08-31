@@ -84,4 +84,13 @@ extension HTTPClient {
         ⬆️\(symbol)
         """)
     }
+    
+    private func logErrorResponse(_ request: URLRequest) {
+        var symbol = "❌❌❌"
+        debugPrint("""
+        \(symbol)⬇️
+        URL: \(request.url?.absoluteString ?? "No URL");
+        ⬆️\(symbol)
+        """)
+    }
 }

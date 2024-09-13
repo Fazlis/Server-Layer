@@ -14,5 +14,6 @@ enum APIError: Error {
     case invalidUrl
     case invalidResponse
     case statusCode(Int)
+    case noInternetConnection
     //case yourErrors...
 }

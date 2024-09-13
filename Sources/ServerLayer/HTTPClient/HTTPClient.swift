@@ -12,6 +12,7 @@ import SwiftyJSON
 final public class HTTPClient {
     private let downloader: any HTTPDataDownloader
     private let requestBuilder: RequestBuilder
+    private let networkMonitor: NetworkMonitor
 
     private lazy var decoder: JSONDecoder = {
         let aDecoder = JSONDecoder()
@@ -19,15 +20,25 @@ final public class HTTPClient {
         return aDecoder
     }()
 
-    public init(downloader: any HTTPDataDownloader = URLSession.shared, requestBuilder: RequestBuilder = .init()) {
-        self.downloader = downloader
-        self.requestBuilder = requestBuilder
-    }
+    public init(
+            downloader: any HTTPDataDownloader = URLSession.shared,
+            requestBuilder: RequestBuilder = .init(),
+            networkMonitor: NetworkMonitor = .shared
+        ) {
+            self.downloader = downloader
+            self.requestBuilder = requestBuilder
+            self.networkMonitor = networkMonitor
+        }
 }
 
 extension HTTPClient {
     @discardableResult
     public func data(from endpoint: Endpoint) async throws -> Data {
+        
+        guard networkMonitor.isInternetAvailable() else {
+            throw APIError.noInternetConnection
+        }
+
         let request = try requestBuilder.makeRequest(from: endpoint)
         
         logRequset(request)
@@ -40,6 +51,10 @@ extension HTTPClient {
     }
 
     public func data<T: Decodable>(from endpoint: Endpoint) async throws -> T {
+        guard networkMonitor.isInternetAvailable() else {
+            throw APIError.noInternetConnection
+        }
+
         let request = try requestBuilder.makeRequest(from: endpoint)
         
         logRequset(request)
